@@ -6,6 +6,10 @@ author: |
   Eren M. El&ccedil;i and Sam Brilleman
 bibliography: refs.bib
 output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '2'
   prettydoc::html_pretty:
     df_print: paged
     highlight: github
@@ -15,10 +19,6 @@ output:
     toc_depth: 2
   pdf_document:
     number_sections: yes
-  html_document:
-    df_print: paged
-    toc: yes
-    toc_depth: '2'
 pagetitle: Bayesian analyses of time-to-event data
 abstract: |
   Time-to-event data refers to the observed time from a defined origin (e.g. diagnosis of a disease) until a terminating event of interest (e.g. death). Such data emerges in a range of industries and scientific disciplines, although it is particularly common in medical and pharmaceutical research. In this talk we introduce the `stan_surv` survival modelling function that is being incorporated into the **rstanarm** R package. We use a clinical case study to demonstrate some of the features of `stan_surv` and its related post-estimation functions. We show how the software can be used as part a robust Bayesian workflow that includes prior and posterior predictive checks. In our prior and posterior predictive checks we consider standard quantities used widely in survival analysis (e.g. hazard functions, survival curves), as well as less widely discussed but equally useful quantities such as the restricted mean survival time (RMST).
@@ -350,13 +350,13 @@ The restricted mean survival time (RMST) can be interpreted as the average event
 For a (continuous) non-negative random variable $T$, limited to some horizon $\tau$, the RMST is denoted by $\rho(\tau)$ and defined as:
 
 $$
-\begin{eqnarray}
-\rho(\tau) &=& \mathbb{E}[\min(T,\tau)] \\
-           &=& \int_{x=0}^{\infty}\left(\int_{t=0}^{\infty} I(t\leq x) I(t\leq \tau)~{\rm d}t\right)p(x)~{\rm d}x \\
-           &=& \int_{t=0}^{\infty} \left( \int_{x=0}^{\infty }I(t\leq x) p(x)\right)I(t\leq \tau )~{\rm d} t\\
-           &=& \int_{t=0}^{\infty} S(t) I(t\leq \tau)~{\rm d}t\\
-           &=& \int_{t=0}^\tau S(t){\rm d}t
-\end{eqnarray}
+\begin{aligned}
+\rho(\tau) &= \mathbb{E}[\min(T,\tau)] \\
+           &= \int_{x=0}^{\infty}\left(\int_{t=0}^{\infty} I(t\leq x) I(t\leq \tau)~{\rm d}t\right)p(x)~{\rm d}x \\
+           &= \int_{t=0}^{\infty} \left( \int_{x=0}^{\infty }I(t\leq x) p(x)\right)I(t\leq \tau )~{\rm d} t\\
+           &= \int_{t=0}^{\infty} S(t) I(t\leq \tau)~{\rm d}t\\
+           &= \int_{t=0}^\tau S(t){\rm d}t
+\end{aligned}
 $$
 
 Where $p(\cdot)$ above denotes the probability density function of R.V. $T$. Given posterior samples of the survival function $S$ we can approximate $\rho(\tau)$ using a 15-point Gauss-Kronrod quadrature, i.e.
